@@ -1,2 +1,2 @@
 # SDEs
-Having a go at SDEs
+## Documenting my first foray into the world of stochastic calculus.

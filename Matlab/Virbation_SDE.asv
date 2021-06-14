@@ -1,0 +1,38 @@
+clear;
+close all;
+
+k = 500000;  % Stiffness [N/m]
+m = 50;  % Rotor mass[kg]
+r_u = 0.1;  % Eccentricity [m]
+m_u = 0.05;  % Unbalanced mass [kg]
+c = 200;  % Damping coefficient [Ns/m]
+t0 = 0;  % Initial time [s] 
+tf = 15;  % Final time [s] (originally 5s)
+fs = 1024; % Sampling rate
+Nt = fs*(tf-t0);  % Time steps Originall 4096 for 5 seconds 
+slew_rate = 200; % RPM slew rate [rpm/s]
+dt = 1/fs;
+
+A = [[0, 1]; [-k/m, -c/m]];
+
+% EoM
+F = @(t,X) 0.1 * X + 1*t; % Drift
+G = @(t,X) 0.3 * X;  % Diffusion
+
+SDE = sde(F, G, 'StartTime', t0, 'StartState', X0)    % dX = F(t,X)dt + G(t,X)dW
+
+
+
+[S,T] = simulate(SDE, Nt, 'DeltaTime', dt, 'nTrials', 10);
+
+
+figure;
+hold on;
+plot(T, S(:,:,1))
+plot(T, S(:,:,2))
+plot(T, S(:,:,3))
+xlabel('Time')
+ylabel('x')
+title('Some Realisations of the SDE')
+legend('1-x1', '1-x2', '2-x1', '2-x2', '3-x1', '3-x2')
+hold off;
